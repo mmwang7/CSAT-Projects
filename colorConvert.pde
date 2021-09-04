@@ -1,21 +1,23 @@
 public class colorConvert {
   private PImage pic;
   
-  public colorConvert(PImage picture) {
-    pic = picture;  
+  public colorConvert(PImage image) {
+    pic = image;  
   }
 
+  // Converts pixel colors to grayscale value
+  // Formula = average of R, G, and B values of a pixel
   public void grayScale() {
     for (int x = 0; x < pic.width; x++) {
       for (int y = 0; y < pic.height; y++) {
         color pxl = pic.get(x, y);
         float avg = (red(pxl) + green(pxl) + blue(pxl)) / 3;
         
-        img.set(x, y, color(avg, avg, avg));
+        pic.set(x, y, color(avg, avg, avg));
       }
     }
   }
-  
+
   public void rubikScale(color[] faceColor) {
     for (int x = 0; x < pic.width; x++) {
       for (int y = 0; y < pic.height; y++) {
@@ -33,9 +35,6 @@ public class colorConvert {
           float bDiff = abs(bPix - blue(faceColor[i]));
     
           colorDist[i] = (((512+rMean)*rDiff*rDiff)/256) + 4*gDiff*gDiff + (((767-rMean)*bDiff*bDiff)/256);
-          // Where I found the formula
-          // https://stackoverflow.com/questions/6334311/whats-the-best-way-to-round-a-color-object-to-the-nearest-color-constant
-            // https://www.compuphase.com/cmetric.htm
         }
         
         int index = 0;
@@ -47,12 +46,13 @@ public class colorConvert {
             min = colorDist[j];
           }
         
-        img.set(x, y, faceColor[index]);
+        pic.set(x, y, faceColor[index]);
         }
       }
     }
   }
-  
+
+
   public void show(int x, int y) {
     image(pic, x, y);
   }

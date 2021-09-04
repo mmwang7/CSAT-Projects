@@ -1,30 +1,28 @@
-PImage img;
+PImage img; //<>//
 color[] rubikColors;
-colorConvert ccImg;
 
 void settings() {
-  size(800, 800);
+  img = loadImage("pengmad.jpg");
+  size(img.width, img.height);
 }
 
 void setup() {
-  background(0);
   // colorMode(HSB, 255);
-  
   rubikColors = new color[] {color(255, 255, 255), color(255, 0, 0), color(0, 255, 0), color(255, 165, 0), color(0, 0, 255), color(255, 255, 0)};
-  
-  img = loadImage("pengmad.jpg");
-  img = img.get(325, 0, 675, 720);
-  ccImg = new colorConvert(img);
 }
 
 void draw() {
-  // ccImg.rubikScale(rubikColors);
-  // ccImg.show(0, 0);
+  PImage newPic = img;
   
-  // pixelate(img, 4, 4); // Image divided unevenly
-  // pixelate(img, 5, 10); // Attempt at pixelating image into rectangular shape.
-  pixelate(img, 15, 15); // The dimensions we are going to use for our project (I think)
   image(img, 0, 0);
+  colorConvert CCimg = new colorConvert(newPic);
+  CCimg.rubikScale(rubikColors);
+  // CCimg.show(img.width, 0);
+  
+  newPic = CCimg.pic;
+  // pixelate Pimg = 
+  pixelate(newPic, 20, 15);
+  image(newPic, 0, 0);
   
   
   noLoop();
