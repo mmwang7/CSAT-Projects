@@ -1,45 +1,49 @@
-PImage img; //<>//
+import processing.pdf.*; //<>//
+
+PImage origImg;
 color[] rubikColors;
 
+colorConvert CCimg;
+pixelate PxlImg;
+cubeCards cubePDF;
+
+PGraphicsPDF pdf;
+int cubeXpos, cubeYpos;
+PImage[] faces;
+
 void settings() {
-  img = loadImage("pengmad.jpg");
-  size(img.width, img.height);
+  origImg = loadImage("wave.jpg");
+  size(850, 1100, PDF, "cubeCards.pdf"); //Create PDF pages
 }
 
 void setup() {
-  // colorMode(HSB, 255);
+  pdf = (PGraphicsPDF) g; // Get the renderer
+  background(255);
+  // Cube face colors = {white, red, green, orange, blue, yellow}
   rubikColors = new color[] {color(255, 255, 255), color(255, 0, 0), color(0, 255, 0), color(255, 165, 0), color(0, 0, 255), color(255, 255, 0)};
+  
+  // PDF Setup
+  cubePDF = new cubeCards();
+  CCimg = new colorConvert(origImg.copy());
+  CCimg.rubikScale(rubikColors);
+  PxlImg = new pixelate(CCimg.pic, 25, 25);
+  PxlImg.cubeulate();
+  faces = PxlImg.cubeFaces();
+  println(origImg.width + ", " + origImg.height);
+  println(PxlImg.pic.width + ", " + PxlImg.pic.height);
 }
 
 void draw() {
-  PImage newPic = img;
+  origImg.resize(500, 500);
+  PxlImg.pic.resize(500, 500);
   
-  image(img, 0, 0);
-  colorConvert CCimg = new colorConvert(newPic);
-  CCimg.rubikScale(rubikColors);
-  // CCimg.show(img.width, 0);
+  image(origImg, 175, 25);
+  image(PxlImg.pic, 175, (origImg.height + 75));
+  PxlImg.gridLines(175, (origImg.height + 75));
+  pdf.nextPage();
   
-  newPic = CCimg.pic;
-  // pixelate Pimg = 
-  pixelate(newPic, 20, 15);
-  image(newPic, 0, 0);
+  cubePDF.textPDF(pdf, faces);
   
-  
+  exit();
   noLoop();
-}
-
-void pixelate (PImage basePic, int cubeWidth, int cubeHeight){
-  int cubiesW = cubeWidth * 3;
-  int cubiesH = cubeHeight * 3;
-  for (int x = 0; x < basePic.width; x+= basePic.width/cubiesW) {
-    for (int y = 0; y < basePic.height; y+= basePic.height/cubiesH) {
-      color pixel = basePic.get(x, y);
-      
-      for (int a = x; (a < x + basePic.width/cubiesW) && (a < basePic.width); a++) {
-        for (int b = y; (b < y + basePic.height/cubiesH) && (b < basePic.height); b++) {
-          basePic.set(a, b, pixel);
-        }
-      } 
-    }
-  }
 }

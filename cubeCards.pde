@@ -1,35 +1,25 @@
 public class cubeCards {
-  private PImage pic;
   
-  public colorConvert(PImage image) {
-    pic = image;  
+  public cubeCards() {
+    
   }
-}
-
-import processing.pdf.*;
-int cubeXpos, cubeYpos;
-
-PGraphicsPDF pdf;
-
-void setup() {
-  size(850, 1100, PDF, "test.pdf");
-  pdf = (PGraphicsPDF) g; // Get the renderer
-  background(255);
-  cubeXpos = 0;
-  cubeYpos = 0;
-}
-
-void draw() {
-  // Draw something good here
-  String coor = "";
-  for (int row = 0; row < 4; row++){
-    for (int col = 0; col < 2; col++){
-      coor = "(" + cubeXpos + ", " + cubeYpos + ")";
+  
+  public void colorPDF (PGraphicsPDF cubeDoc, PImage[] cubes){
+    noFill();
+    textSize(30);
+    String coor = "";
+    int row = 0;
+    int col = 0;
+    
+    for (int i = 0; i < cubes.length; i++){
+      coor = "(" + i%25 + ", " + (24 - (int)i/25) + ")";
       pushMatrix();
       translate(425 * col, 275 * row);
-      //card
+      // Cards
       rect(50, 50, 325, 175);
-      //Cube Grid
+      // Cube Face
+      cubes[i].resize(150, 150);
+      image(cubes[i], 212.5, 62.5);
       rect(212.5, 62.5, 150, 150);
       line(262.5, 62.5, 262.5, 212.5);
       line(312.5, 62.5, 312.5, 212.5);
@@ -37,24 +27,97 @@ void draw() {
       line(212.5,162.5,362.5,162.5);
       // Coordinates
       fill(0);
-      text(coor, 125, 100);
-      popMatrix();
+      text(coor, 75, 100);
       noFill();
-      if (cubeXpos < 14)
-        cubeXpos++;
-      else {
-        cubeYpos++;
-        cubeXpos = 0;
+      popMatrix();
+      col++;
+      if (col > 1){
+        col = 0;
+        row++;
+      }
+      if (row > 3){
+        cubeDoc.nextPage();
+        row = 0;
       }
     }
   }
   
-  // When finished drawing, quit and save the file
-  // if (frameCount == 10) {
-  if (cubeYpos > 14){
-    exit();
+  public void textPDF (PGraphicsPDF cubeDoc, PImage[] cubes){
+    noFill();
+    textSize(30);
+    String coor = "";
+    int row = 0;
+    int col = 0;
+    
+    for (int i = 0; i < cubes.length; i++){
+      coor = "(" + i%25 + ", " + (24 - (int)i/25) + ")";
+      pushMatrix();
+      translate(425 * col, 275 * row);
+      // Cards
+      rect(50, 50, 325, 175);
+      // Cube Face
+      String [] pixelColor = colorLetter(cubes[i], rubikColors);
+      rect(212.5, 62.5, 150, 150);
+      line(262.5, 62.5, 262.5, 212.5);
+      line(312.5, 62.5, 312.5, 212.5);
+      line(212.5,112.5,362.5,112.5);
+      line(212.5,162.5,362.5,162.5);
+      
+      float r = 97.5;
+      float c = 227.5;
+      for (int a = 0; a < pixelColor.length; a++){
+        fill(0);
+        text(pixelColor[a], c, r);
+        noFill();
+        
+        c += 50;
+        if (c > 362.5){
+          c = 227.5;
+          r += 50; //max= 212.5
+        }
+      }
+      // Coordinates
+      fill(0);
+      text(coor, 75, 100);
+      popMatrix();
+      noFill();
+      
+      col++;
+      if (col > 1){
+        col = 0;
+        row++;
+      }
+      if (row > 3){
+        cubeDoc.nextPage();
+        row = 0;
+      }
+    }
   }
-  else {
-    pdf.nextPage();  // Tell it to go to the next page
+  
+  public String[] colorLetter(PImage img, color[] faceColor){
+    int index = 0;
+    String[] colorLetter = new String[9];
+    for (int y = 0; y < img.height; y += img.height/3) {
+      for (int x = 0; x < img.width; x += img.width/3) {
+        color pxl = img.get(x+1, y+1);
+        
+        if (pxl == faceColor[0])
+          colorLetter[index] = "W";
+        if (pxl == faceColor[1])
+          colorLetter[index] = "R";
+        if (pxl == faceColor[2])
+          colorLetter[index] = "G";
+        if (pxl == faceColor[3])
+          colorLetter[index] = "O";
+        if (pxl == faceColor[4])
+          colorLetter[index] = "B";
+        if (pxl == faceColor[5])
+          colorLetter[index] = "Y";
+        
+        index++;
+      }
+    }
+    return colorLetter;
   }
+    
 }
